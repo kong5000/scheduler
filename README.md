@@ -1,5 +1,9 @@
 # Interview Scheduler
 
+## Screenshots
+!["Scheduler"](https://github.com/kong5000/scheduler/blob/master/docs/scheduler1.png?raw=true)
+!["Scheduler"](https://github.com/kong5000/scheduler/blob/master/docs/scheduler2.png?raw=true)
+
 ## Setup
 
 Install dependencies with `npm install`.
