@@ -58,7 +58,7 @@ export default function () {
     })
   }
 
-  function updateInterview(id, interview) {
+  function websocketUpdateInterview(id, interview) {
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -72,7 +72,7 @@ export default function () {
     setState({ ...state, appointments })
   }
 
-  function updateCancelInterview(id) {
+  function websocketCancelInterview(id) {
     const appointment = {
       ...state.appointments[id],
       interview: null
@@ -127,9 +127,9 @@ export default function () {
     const type = message.type;
     if (type === "SET_INTERVIEW") {
       if(message.interview === null){
-        updateCancelInterview(message.id)
+        websocketCancelInterview(message.id)
       }else{
-        updateInterview(message.id, message.interview)
+        websocketUpdateInterview(message.id, message.interview)
       }
       Promise.all([
         axios.get('http://localhost:8001/api/days'),
