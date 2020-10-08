@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import "./styles.scss"
 import Header from "./Header"
 import Show from "./Show"
@@ -21,6 +21,19 @@ const ERROR_DELETE = "ERROR_DELETE";
 
 const Appointment = (props) => {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
+  
+  useEffect(() => {
+    console.log(props.interview)
+    if(mode === EMPTY && props.interview){
+      transition(SHOW)
+    }
+    if (mode === SHOW && props.interview === null) {
+      transition(EMPTY);
+     }
+    }, [props.interview, transition, mode]);
+
+
+
   function save(name, interviewer) {
     if (!interviewer) {
       return;
@@ -50,14 +63,14 @@ const Appointment = (props) => {
     <article className="appointment" data-testid="appointment">
       <Header time={props.time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SHOW && (
+      {mode === SHOW && props.interview && 
         <Show
           student={props.interview.student}
           interviewer={props.interviewers.find(interviewer => interviewer.id === props.interview.interviewer)}
           onDelete={() => transition(CONFIRM)}
           onEdit={() => transition(EDIT)}
         />
-      )}
+      }
       {mode === CREATE && <Form onSave={save} interviewers={props.interviewers} onCancel={() => back()} />}
       {mode === SAVING && <Status message="Saving" />}
       {mode === CONFIRM && <Confirm

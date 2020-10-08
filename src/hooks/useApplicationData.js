@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+
+
+
 export default function () {
+  const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
+
   const [state, setState] = useState({
     day: "Monday",
     days: [],
@@ -29,7 +35,13 @@ export default function () {
       [id]: appointment
     };
 
-    const interviewExists = state.appointments[id].interview
+    let interviewExists
+
+    if (state.appointments[id]) {
+      interviewExists = state.appointments[id].interview
+    } else {
+      interviewExists = false;
+    }
 
     if (!interviewExists) {
       for (const day of days) {
@@ -45,6 +57,39 @@ export default function () {
       setState({ ...state, appointments, days })
     })
   }
+
+  function websocketBookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    setState({ ...state, appointments })
+  }
+
+  function websocketCancelInterview(id) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    const days = [
+      ...state.days
+    ]
+    setState({ ...state, appointments, days })
+  }
+
+
 
   function cancelInterview(id) {
     const appointment = {
@@ -74,7 +119,25 @@ export default function () {
     })
   }
 
+  webSocket.onmessage = event => {
+    console.log(`Message Received: ${event.data}`);
+    const message = JSON.parse(event.data)
+    const type = message.type;
+    if (type === "SET_INTERVIEW") {
+      if(message.interview === null){
+        websocketCancelInterview(message.id)
+      }else{
+        websocketBookInterview(message.id, message.interview)
+      }
+    }
+  };
+
+
   useEffect(() => {
+
+
+
+
     Promise.all([
       axios.get('http://localhost:8001/api/days'),
       axios.get('http://localhost:8001/api/appointments'),
