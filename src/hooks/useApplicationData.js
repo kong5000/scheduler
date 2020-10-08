@@ -1,13 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { func } from 'prop-types';
-
-
-
 
 export default function () {
   const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-
 
   const [state, setState] = useState({
     day: "Monday",
@@ -26,10 +21,7 @@ export default function () {
       interview: { ...interview }
     };
 
-    const days = [
-      ...state.days
-    ]
-
+    const days = [...state.days]
 
     const appointments = {
       ...state.appointments,
@@ -84,15 +76,10 @@ export default function () {
       [id]: appointment
     };
 
-    const days = [
-      ...state.days
-    ]
+    const days = [...state.days]
 
-
-      setState({ ...state, appointments, days })
+    setState({ ...state, appointments, days })
   }
-
-
 
   function cancelInterview(id) {
     const appointment = {
@@ -122,7 +109,7 @@ export default function () {
     })
   }
 
-  function updateStateFromServer(){
+  function updateStateFromServer() {
     Promise.all([
       axios.get('http://localhost:8001/api/days'),
       axios.get('http://localhost:8001/api/appointments'),
@@ -133,19 +120,17 @@ export default function () {
   }
 
   webSocket.onmessage = event => {
-    console.log(`Message Received: ${event.data}`);
     const message = JSON.parse(event.data)
     const type = message.type;
     if (type === "SET_INTERVIEW") {
-      if(message.interview === null){
+      if (message.interview === null) {
         websocketCancelInterview(message.id)
-      }else{
+      } else {
         websocketUpdateInterview(message.id, message.interview)
       }
+      updateStateFromServer();
     }
-    updateStateFromServer();
   };
-
 
   useEffect(() => {
     updateStateFromServer();
@@ -157,5 +142,4 @@ export default function () {
     bookInterview,
     cancelInterview
   }
-
 }
