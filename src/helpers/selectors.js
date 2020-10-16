@@ -1,6 +1,7 @@
 export function getAppointmentsForDay(state, day) {
   const appointments = []
   for(let dayOfWeek of state.days){
+    console.log(dayOfWeek)
     if(day === dayOfWeek.name){
       for(const appointmentId of dayOfWeek.appointments){
         appointments.push(state.appointments[appointmentId])

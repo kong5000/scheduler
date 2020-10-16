@@ -18,6 +18,7 @@ export default function Application(props) {
 
   const dailyInterviewers=getInterviewersForDay(state, state.day);
   const dailyAppointments = getAppointmentsForDay(state, state.day);
+  console.log(dailyAppointments, "DAILY APPOINTMENTS")
   const schedule = dailyAppointments.map((appointment) => {
     return (
       <Appointment
@@ -33,7 +34,8 @@ export default function Application(props) {
       />
     );
   });
-
+  schedule.push(<Appointment/>)
+  console.log(schedule, "SCHEDULE!")
   return (
     <main className="layout">
       <section className="sidebar">
